@@ -24,27 +24,49 @@ public class UserController : ControllerBase
     [HttpGet("{email}", Name = "GetUser")]
     public IActionResult Get(string email)
     {                
-        throw new NotImplementedException();
+        var currentUser = this._service.GetUser(email);
+        if (currentUser == null)
+        {
+            return NotFound();
+        }
+        return Ok(currentUser);
     }
 
     // 7 - Sua aplicação deve ter o endpoint POST /user
     [HttpPost]
     public IActionResult Create([FromBody]User user)
     {
-        throw new NotImplementedException();
+        this._service.AddUser(user);
+        return CreatedAtRoute("GetUser", new { email = user.Email }, user);
     }
 
     // "8 - Sua aplicação deve ter o endpoint PUT /user
     [HttpPut("{email}")]
     public IActionResult Update(string email, [FromBody]User user)
     {
-        throw new NotImplementedException();
+        var currentUser = this._service.GetUser(email);
+        if (currentUser == null)
+        {
+            return NotFound();
+        }
+        if (email != user.Email.ToLower())
+        {
+            return BadRequest();
+        }
+        this._service.UpdateUser(user);
+        return Ok();
     }
 
     // 9 - Sua aplicação deve ter o endpoint DEL /user
     [HttpDelete("{email}")]
     public IActionResult Delete(string email)
     {
-        throw new NotImplementedException();
+        bool userExists = this._service.UserExists(email);
+        if (!userExists)
+        {
+            return NotFound();
+        }
+        this._service.DeleteUser(email);
+        return NoContent();
     } 
 }
