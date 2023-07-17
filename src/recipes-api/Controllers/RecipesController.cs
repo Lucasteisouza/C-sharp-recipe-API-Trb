@@ -53,7 +53,13 @@ public class RecipesController : ControllerBase
     [HttpPut("{name}")]
     public IActionResult Update(string name, [FromBody]Recipe recipe)
     {
-        throw new NotImplementedException();
+        var currentRecipe = this._service.GetRecipe(name);
+        if (currentRecipe == null || name != recipe.Name.ToLower())
+        {
+            return BadRequest();
+        }
+        this._service.UpdateRecipe(recipe);
+        return NoContent();
     }
 
     // 5 - Sua aplicação deve ter o endpoint DEL /recipe
